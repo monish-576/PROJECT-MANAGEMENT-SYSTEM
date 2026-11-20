@@ -1,0 +1,19 @@
+{
+  "name": "project-management-system",
+  "version": "1.0.0",
+  "description": "Fullstack Project Management System with React, Node.js, Express, and MongoDB",
+  "scripts": {
+    "start": "npm run server",
+    "server": "npm start --prefix Backend",
+    "frontend": "npm start --prefix frontend",
+    "dev:backend": "npm run dev --prefix Backend",
+    "test": "npm test --prefix Backend",
+    "build": "npm run build --prefix frontend",
+    "preview": "npm run serve --prefix frontend",
+    "seed": "npm run seed --prefix Backend"
+  },
+  "dependencies": {
+    "node-cron": "^4.1.1",
+    "react-icons": "^5.5.0"
+  }
+}
