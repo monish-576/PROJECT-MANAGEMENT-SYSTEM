@@ -10,17 +10,42 @@ const PORT = process.env.PORT || 5000;
 const RENDER_BACKEND_URL = process.env.RENDER_BACKEND_URL;
 
 // Middleware
+const allowedOrigins = [
+  'https://project-management-flow-waay.netlify.app',
+  'http://localhost:5173',
+  'http://localhost:4028',
+  'http://localhost:3000'
+];
+
 app.use(cors({
-  origin: '*',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. mobile apps, curl, or server-to-server) or matched origins
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.netlify.app') || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
+// Health check endpoint for Render & monitors
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    dbState: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+  });
+});
+
 // MongoDB Connection
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/project_management_db';
 mongoose.connect(MONGO_URI)
-  .then(() => console.log(`MongoDB connected successfully to ${MONGO_URI}`))
+  .then(() => console.log('MongoDB connected successfully'))
   .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
