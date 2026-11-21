@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '../AppIcon';
+import { useModal } from '../../context/ModalContext';
 
 const CommandPalette = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,6 +9,7 @@ const CommandPalette = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const navigate = useNavigate();
   const inputRef = useRef(null);
+  const { setIsProjectModalOpen, setIsTaskModalOpen } = useModal() || {};
 
   const navigationCommands = [
     { id: 'dashboard', label: 'Go to Dashboard', path: '/dashboard-overview', icon: 'LayoutDashboard', category: 'Navigation' },
@@ -82,12 +84,16 @@ const CommandPalette = () => {
   const handleCommandSelect = (command) => {
     if (command.path) {
       navigate(command.path);
+    } else if (command.action === 'create-task') {
+      if (setIsTaskModalOpen) setIsTaskModalOpen(true);
+    } else if (command.action === 'create-project') {
+      if (setIsProjectModalOpen) setIsProjectModalOpen(true);
+    } else if (command.action === 'invite-member') {
+      navigate('/team-management');
     } else if (command.action) {
-      // Handle action commands
       console.log(`Executing action: ${command.action}`);
     } else if (command.type) {
-      // Handle task selection
-      console.log(`Opening task: ${command.label}`);
+      navigate('/kanban-board');
     }
     
     setIsOpen(false);

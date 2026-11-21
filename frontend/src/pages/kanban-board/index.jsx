@@ -43,6 +43,18 @@ const KanbanBoard = () => {
 
   useEffect(() => {
     fetchBoardData();
+
+    const handleRefresh = () => {
+      fetchBoardData();
+    };
+
+    window.addEventListener('task-created', handleRefresh);
+    window.addEventListener('project-created', handleRefresh);
+
+    return () => {
+      window.removeEventListener('task-created', handleRefresh);
+      window.removeEventListener('project-created', handleRefresh);
+    };
   }, []);
 
   const fetchBoardData = async () => {
@@ -109,6 +121,7 @@ const KanbanBoard = () => {
     try {
       await tasksAPI.create(taskForm.projectId, taskForm);
       setIsCreateModalOpen(false);
+      window.dispatchEvent(new CustomEvent('task-created', { detail: taskForm }));
       fetchBoardData();
     } catch (err) {
       setFormError(err.response?.data?.message || 'Failed to create task.');

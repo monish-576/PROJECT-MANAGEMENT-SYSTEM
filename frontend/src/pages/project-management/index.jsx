@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Icon from '../../components/AppIcon';
 import { useUser } from '../../context/UserContext';
+import { useModal } from '../../context/ModalContext';
 import { projectsAPI, tasksAPI, authAPI } from '../../services/api';
 
 const ProjectManagement = () => {
   const { user } = useUser();
+  const { setIsTaskModalOpen } = useModal() || {};
   const [projects, setProjects] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,6 +45,18 @@ const ProjectManagement = () => {
 
   useEffect(() => {
     fetchData();
+
+    const handleRefresh = () => {
+      fetchData();
+    };
+
+    window.addEventListener('project-created', handleRefresh);
+    window.addEventListener('task-created', handleRefresh);
+
+    return () => {
+      window.removeEventListener('project-created', handleRefresh);
+      window.removeEventListener('task-created', handleRefresh);
+    };
   }, []);
 
   const fetchData = async () => {
@@ -89,6 +103,7 @@ const ProjectManagement = () => {
       });
       setProjects([newProj, ...projects]);
       setIsCreateModalOpen(false);
+      window.dispatchEvent(new CustomEvent('project-created', { detail: newProj }));
     } catch (err) {
       setFormError(err.response?.data?.message || 'Failed to create project.');
     } finally {
@@ -177,6 +192,7 @@ const ProjectManagement = () => {
       const updatedProject = await tasksAPI.create(currentProject._id, taskForm);
       setProjects(projects.map((p) => (p._id === currentProject._id ? updatedProject : p)));
       setIsAddTaskModalOpen(false);
+      window.dispatchEvent(new CustomEvent('task-created', { detail: updatedProject }));
     } catch (err) {
       setFormError(err.response?.data?.message || 'Failed to add task.');
     } finally {
@@ -239,13 +255,24 @@ const ProjectManagement = () => {
           </p>
         </div>
 
-        <button
-          onClick={handleOpenCreateModal}
-          className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md shadow-blue-500/20 shrink-0"
-        >
-          <Icon name="Plus" size={18} />
-          <span>Create Project</span>
-        </button>
+        <div className="flex items-center space-x-3 shrink-0">
+          <button
+            onClick={() => setIsTaskModalOpen && setIsTaskModalOpen(true)}
+            className="inline-flex items-center space-x-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all border border-slate-200 shadow-sm"
+            title="Add New Task"
+          >
+            <Icon name="CheckSquare" size={17} className="text-emerald-600" />
+            <span>New Task</span>
+          </button>
+
+          <button
+            onClick={handleOpenCreateModal}
+            className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-md shadow-blue-500/20 shrink-0"
+          >
+            <Icon name="Plus" size={18} />
+            <span>Create Project</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}

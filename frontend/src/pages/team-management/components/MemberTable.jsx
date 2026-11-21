@@ -23,7 +23,8 @@ const MemberTable = ({ searchQuery, roleFilter }) => {
   useEffect(() => {
     const fetchTeamMembers = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_RENDER_BACKEND_URL}/api/users/team-members`);
+        const backendUrl = import.meta.env.VITE_RENDER_BACKEND_URL || 'http://localhost:5000';
+        const response = await fetch(`${backendUrl}/api/users/team-members`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

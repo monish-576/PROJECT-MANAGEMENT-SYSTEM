@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const BACKEND_URL = import.meta.env.VITE_RENDER_BACKEND_URL || 'http://localhost:5000';
+
 const SprintManagement = () => {
   const [sprints, setSprints] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -23,7 +25,7 @@ const SprintManagement = () => {
 
   const fetchSprints = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_RENDER_BACKEND_URL}/api/sprints`);
+      const res = await axios.get(`${BACKEND_URL}/api/sprints`);
       setSprints(res.data);
     } catch (err) {
       console.error('Error fetching sprints:', err);
@@ -33,7 +35,7 @@ const SprintManagement = () => {
 
   const fetchProjects = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_RENDER_BACKEND_URL}/api/projects`);
+      const res = await axios.get(`${BACKEND_URL}/api/projects`);
       setProjects(res.data);
     } catch (err) {
       console.error('Error fetching projects:', err);
@@ -42,7 +44,7 @@ const SprintManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_RENDER_BACKEND_URL}/api/users`);
+      const res = await axios.get(`${BACKEND_URL}/api/users`);
       setUsers(res.data);
     } catch (err) {
       console.error('Error fetching users:', err);
@@ -53,7 +55,7 @@ const SprintManagement = () => {
     e.preventDefault();
     setError('');
     try {
-      const res = await axios.post(`${import.meta.env.VITE_RENDER_BACKEND_URL}/api/sprints`, {
+      const res = await axios.post(`${BACKEND_URL}/api/sprints`, {
         sprintName: newSprintName,
         durationDays: newDurationDays,
         sprintGoal: newSprintGoal,
@@ -74,7 +76,7 @@ const SprintManagement = () => {
     e.preventDefault();
     setError('');
     try {
-      const res = await axios.post(`${import.meta.env.VITE_RENDER_BACKEND_URL}/api/sprints/${selectedSprintId}/tasks`, {
+      const res = await axios.post(`${BACKEND_URL}/api/sprints/${selectedSprintId}/tasks`, {
         taskName: newTaskName,
         assignedTo: newTaskAssignedTo,
         dueDate: newTaskDueDate || null

@@ -82,8 +82,18 @@ const Header = ({ toggleSidebar, isSidebarOpen }) => {
         {/* Right Section */}
         <div className="flex items-center space-x-2 sm:space-x-3">
           <button
+            onClick={() => setIsTaskModalOpen && setIsTaskModalOpen(true)}
+            className="hidden sm:inline-flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 shadow-sm transition-all"
+            title="Create New Task"
+          >
+            <Icon name="CheckSquare" size={14} className="text-emerald-600" />
+            <span>New Task</span>
+          </button>
+
+          <button
             onClick={() => setIsProjectModalOpen && setIsProjectModalOpen(true)}
-            className="hidden sm:inline-flex items-center space-x-1.5 bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-all"
+            className="hidden sm:inline-flex items-center space-x-1.5 bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm shadow-blue-500/20 transition-all"
+            title="Create New Project"
           >
             <Icon name="Plus" size={14} />
             <span>New Project</span>

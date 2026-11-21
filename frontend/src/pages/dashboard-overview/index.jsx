@@ -25,6 +25,18 @@ const DashboardOverview = () => {
 
   useEffect(() => {
     loadDashboard();
+
+    const handleDataRefresh = () => {
+      loadDashboard();
+    };
+
+    window.addEventListener('project-created', handleDataRefresh);
+    window.addEventListener('task-created', handleDataRefresh);
+
+    return () => {
+      window.removeEventListener('project-created', handleDataRefresh);
+      window.removeEventListener('task-created', handleDataRefresh);
+    };
   }, []);
 
   const loadDashboard = async () => {

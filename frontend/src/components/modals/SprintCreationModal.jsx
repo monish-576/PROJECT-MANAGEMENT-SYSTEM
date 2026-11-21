@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { projectsAPI, sprintsAPI } from '../../services/api';
 
 const SprintCreationModal = ({ isOpen, onClose, onSprintCreated }) => {
   const [sprintName, setSprintName] = useState('');
@@ -9,14 +9,19 @@ const SprintCreationModal = ({ isOpen, onClose, onSprintCreated }) => {
   const [projectId, setProjectId] = useState('');
   const [projects, setProjects] = useState([]);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       // Fetch projects when the modal opens
       const fetchProjects = async () => {
         try {
-          const response = await axios.get(`${import.meta.env.VITE_RENDER_BACKEND_URL}/api/projects`);
-          setProjects(response.data);
+          const data = await projectsAPI.getAll();
+          const projectsList = Array.isArray(data) ? data : [];
+          setProjects(projectsList);
+          if (projectsList.length > 0 && !projectId) {
+            setProjectId(projectsList[0]._id);
+          }
         } catch (err) {
           console.error('Error fetching projects:', err);
           setError('Failed to load projects.');
@@ -35,15 +40,18 @@ const SprintCreationModal = ({ isOpen, onClose, onSprintCreated }) => {
       return;
     }
 
+    setLoading(true);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_RENDER_BACKEND_URL}/api/sprints`, {
+      const response = await sprintsAPI.create({
         name: sprintName,
         startDate,
         endDate,
         sprintGoal,
         projectId,
       });
-      onSprintCreated(response.data);
+      if (onSprintCreated) {
+        onSprintCreated(response);
+      }
       onClose();
       setSprintName('');
       setStartDate('');
@@ -53,6 +61,8 @@ const SprintCreationModal = ({ isOpen, onClose, onSprintCreated }) => {
     } catch (err) {
       console.error('Error creating sprint:', err);
       setError(err.response?.data?.message || 'Failed to create sprint.');
+    } finally {
+      setLoading(false);
     }
   };
 

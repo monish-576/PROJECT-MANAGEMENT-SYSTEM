@@ -28,8 +28,8 @@ const SprintPlanning = () => {
   const [selectedTasks, setSelectedTasks] = useState([]);
   const [sprints, setSprints] = useState([]);
 
-  // ✅ get backend URL from env
-  const API_BASE_URL = import.meta.env.VITE_RENDER_BACKEND_URL;
+  // ✅ get backend URL from env with localhost fallback
+  const API_BASE_URL = import.meta.env.VITE_RENDER_BACKEND_URL || 'http://localhost:5000';
 
   const enrichSprintTasks = (sprint, backlog) => ({
     ...sprint,

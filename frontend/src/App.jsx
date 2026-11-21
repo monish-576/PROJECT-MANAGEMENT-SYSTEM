@@ -16,17 +16,17 @@ function App() {
 
   const handleProjectCreated = (newProject) => {
     setIsProjectModalOpen(false);
-    window.location.reload();
+    window.dispatchEvent(new CustomEvent('project-created', { detail: newProject }));
   };
 
   const handleSprintCreated = (newSprint) => {
     setIsSprintModalOpen(false);
-    window.location.reload();
+    window.dispatchEvent(new CustomEvent('sprint-created', { detail: newSprint }));
   };
 
   const handleTaskCreated = (newTask) => {
     setIsTaskModalOpen(false);
-    window.location.reload();
+    window.dispatchEvent(new CustomEvent('task-created', { detail: newTask }));
   };
 
   return (
