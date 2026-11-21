@@ -131,6 +131,10 @@ export const sprintsAPI = {
     const res = await api.put(`/api/sprints/${sprintId}/start`);
     return res.data;
   },
+  delete: async (sprintId) => {
+    const res = await api.delete(`/api/sprints/${sprintId}`);
+    return res.data;
+  },
 };
 
 export default api;

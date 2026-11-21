@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Icon from "../../../components/AppIcon";
 
-const SprintForm = ({ sprint, onUpdate, onRemoveTask, onStartSprint }) => {
+const SprintForm = ({ sprint, onUpdate, onRemoveTask, onStartSprint, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: sprint?.name,
@@ -56,12 +56,24 @@ const SprintForm = ({ sprint, onUpdate, onRemoveTask, onStartSprint }) => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-medium text-text-primary">Sprint Details</h2>
-        <button
-          onClick={() => setIsEditing((prev) => !prev)}
-          className="p-2 text-secondary-600 hover:text-text-primary hover:bg-secondary-100 rounded-lg transition-colors duration-200"
-        >
-          <Icon name={isEditing ? "X" : "Edit"} size={18} />
-        </button>
+        <div className="flex items-center space-x-1.5">
+          {onDelete && sprint?._id && (
+            <button
+              onClick={() => onDelete(sprint._id)}
+              className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors duration-200"
+              title="Delete Sprint"
+            >
+              <Icon name="Trash2" size={17} />
+            </button>
+          )}
+          <button
+            onClick={() => setIsEditing((prev) => !prev)}
+            className="p-2 text-secondary-600 hover:text-text-primary hover:bg-secondary-100 rounded-lg transition-colors duration-200"
+            title={isEditing ? "Cancel Edit" : "Edit Sprint"}
+          >
+            <Icon name={isEditing ? "X" : "Edit"} size={18} />
+          </button>
+        </div>
       </div>
 
       {/* Edit mode */}

@@ -97,6 +97,12 @@ cron.schedule('0 0 * * *', async () => { // Runs every day at midnight
   }
 });
 
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled Server Error:', err);
+  res.status(500).json({ message: err.message || 'Server error' });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

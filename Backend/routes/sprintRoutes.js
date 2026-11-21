@@ -159,10 +159,11 @@ router.post('/:sprintId/tasks', async (req, res) => {
       await sprint.save();
     }
 
-    // Update task status to 'Sprint' in the project
-    task.status = 'Sprint';
-    project.markModified('tasks');
-    await project.save();
+    // Update task status to 'Sprint' in the project atomically
+    await Project.findOneAndUpdate(
+      { _id: projectId, 'tasks._id': taskId },
+      { $set: { 'tasks.$.status': 'Sprint' } }
+    );
 
     res.json({ message: 'Task added to sprint successfully', sprint, task });
   } catch (error) {
@@ -348,6 +349,20 @@ router.put('/:sprintId/start', async (req, res) => {
   } catch (error) {
     console.error('Error updating sprint started status:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Delete a sprint
+router.delete('/:id', async (req, res) => {
+  try {
+    const sprint = await Sprint.findByIdAndDelete(req.params.id);
+    if (!sprint) {
+      return res.status(404).json({ message: 'Sprint not found' });
+    }
+    res.json({ message: 'Sprint deleted successfully', id: req.params.id });
+  } catch (error) {
+    console.error('Error deleting sprint:', error);
+    res.status(500).json({ message: 'Server error deleting sprint' });
   }
 });
 

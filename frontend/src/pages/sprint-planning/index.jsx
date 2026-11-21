@@ -10,6 +10,7 @@ import SprintForm from "./components/SprintForm";
 import TaskBacklog from "./components/TaskBacklog";
 import TaskDetailModal from "../../components/ui/TaskDetailModal";
 import { useModal } from "../../context/ModalContext";
+import { sprintsAPI } from "../../services/api";
 
 const SprintPlanning = () => {
   const navigate = useNavigate();
@@ -69,6 +70,19 @@ const SprintPlanning = () => {
   }, [API_BASE_URL]);
 
   const handleSprintChange = (sprint) => setSelectedSprint(sprint);
+
+  const handleDeleteSprint = async (sprintId) => {
+    if (!window.confirm("Are you sure you want to delete this sprint?")) return;
+    try {
+      await sprintsAPI.delete(sprintId);
+      const remaining = sprints.filter((s) => s._id !== sprintId);
+      setSprints(remaining);
+      setSelectedSprint(remaining.length > 0 ? remaining[0] : null);
+    } catch (err) {
+      console.error("Failed to delete sprint:", err);
+      alert("Failed to delete sprint.");
+    }
+  };
 
   const handleSprintUpdate = (updatedSprint) => {
     setSelectedSprint(updatedSprint);
@@ -270,14 +284,30 @@ const SprintPlanning = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             <div className="lg:col-span-2">
-              {selectedSprint && (
+              {selectedSprint ? (
                 <div className="bg-surface border border-border rounded-lg overflow-hidden">
                   <SprintForm
                     sprint={selectedSprint}
                     onUpdate={handleSprintUpdate}
                     onRemoveTask={handleRemoveTaskFromSprint}
                     onStartSprint={handleStartSprint}
+                    onDelete={handleDeleteSprint}
                   />
+                </div>
+              ) : (
+                <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-sm">
+                  <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <Icon name="Calendar" size={24} />
+                  </div>
+                  <h3 className="text-base font-bold text-slate-800">No Active Sprints</h3>
+                  <p className="text-xs text-slate-500 mt-1 mb-5">Create a sprint to group backlog items into structured sprint iterations.</p>
+                  <button
+                    onClick={() => setIsSprintModalOpen(true)}
+                    className="inline-flex items-center space-x-1.5 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm shadow-blue-500/20 transition-all"
+                  >
+                    <Icon name="Plus" size={16} />
+                    <span>Create New Sprint</span>
+                  </button>
                 </div>
               )}
             </div>
