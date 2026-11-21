@@ -19,7 +19,7 @@ export default defineConfig({
     strictPort: true,
     allowedHosts: ['.amazonaws.com'],
     proxy: {
-      '/api': process.env.VITE_RENDER_BACKEND_URL || 'https://project-management-h4gp.onrender.com'
+      '/api': process.env.VITE_RENDER_BACKEND_URL || 'http://localhost:5000'
     }
   }
 });
